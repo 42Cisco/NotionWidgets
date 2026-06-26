@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <title>Reloginho Notion Dark - Teste 1 Min</title>
+
+  <style>
+    :root {
+      --page: #191919;
+      --card: #202020;
+      --card-bottom: #1c1c1c;
+      --line: #333333;
+      --ink: #ededed;
+      --button: #2b2b2b;
+      --button-hover: #333333;
+      --shadow: rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      min-width: 100%;
+      height: 100%;
+      min-height: 100%;
+      background: var(--page) !important;
+      background-color: var(--page) !important;
+      color: var(--ink);
+      overflow: hidden;
+      color-scheme: dark;
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+      padding: 0;
+    }
+
+    .page {
+      width: 100vw;
+      height: 100vh;
+      min-width: 100vw;
+      min-height: 100vh;
+      background: var(--page) !important;
+      display: grid;
+      place-items: center;
+      padding: 0;
+    }
+
+    .widget {
+      width: 100%;
+      height: 100%;
+      max-width: 280px;
+      max-height: 300px;
+      aspect-ratio: 1 / 1.05;
+      background: linear-gradient(180deg, var(--card) 0%, var(--card-bottom) 100%);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: 0 14px 34px var(--shadow);
+      display: flex;
+      flex-direction: column;
+      padding: 16px 14px 12px;
+      gap: 10px;
+    }
+
+    .clock-wrap {
+      flex: 1;
+      width: 100%;
+      display: grid;
+      place-items: center;
+      padding-top: 2px;
+    }
+
+    .clock {
+      width: min(80%, 205px);
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      border: 4px solid var(--ink);
+      position: relative;
+      background: #1b1b1b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+        0 10px 24px rgba(0, 0, 0, 0.24);
+      overflow: visible;
+    }
+
+    .progress {
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background:
+        conic-gradient(var(--ink) var(--progress, 0deg), transparent var(--progress, 0deg));
+      mask: radial-gradient(circle, transparent 72%, #000 73%);
+      -webkit-mask: radial-gradient(circle, transparent 72%, #000 73%);
+      opacity: 0.18;
+      pointer-events: none;
+    }
+
+    .tick {
+      position: absolute;
+      background: var(--ink);
+      border-radius: 999px;
+      opacity: 0.9;
+    }
+
+    .tick.t12, .tick.t6 {
+      width: 2px;
+      height: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .tick.t12 { top: 16px; }
+    .tick.t6 { bottom: 16px; }
+
+    .tick.t3, .tick.t9 {
+      width: 14px;
+      height: 2px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .tick.t3 { right: 16px; }
+    .tick.t9 { left: 16px; }
+
+    .hand {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      background: var(--ink);
+      border-radius: 999px;
+      transform-origin: left center;
+      z-index: 1;
+    }
+
+    .hand.hour {
+      width: 13%;
+      height: 4px;
+      transform: rotate(-55deg);
+      opacity: 0.95;
+    }
+
+    .hand.minute {
+      width: 20%;
+      height: 2px;
+      transform: rotate(-90deg);
+      opacity: 1;
+      background: #ff5a5f;
+    }
+
+    .center-dot {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 9px;
+      height: 9px;
+      background: var(--ink);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 0 4px rgba(237, 237, 237, 0.07);
+      z-index: 2;
+    }
+
+    .readout {
+      position: absolute;
+      z-index: 10;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      display: grid;
+      place-items: center;
+      padding: 0 10px;
+      min-width: auto;
+      background: #1b1b1b;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    .time {
+      font-size: 28px;
+      line-height: 0.95;
+      font-weight: 700;
+      letter-spacing: -0.05em;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+      text-shadow: 0 1px 0 rgba(0,0,0,0.25);
+    }
+
+    .controls {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 0;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: var(--button);
+      color: var(--ink);
+      border-radius: 16px;
+      height: 42px;
+      width: 54px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.15s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
+      font-weight: 700;
+    }
+
+    button:hover {
+      background: var(--button-hover);
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    button:disabled {
+      opacity: 0.35;
+      cursor: default;
+      transform: none;
+    }
+
+    .primary {
+      background: var(--ink);
+      color: #191919;
+      border-color: var(--ink);
+    }
+
+    .primary:hover {
+      background: #ffffff;
+      border-color: #ffffff;
+    }
+
+    .play-icon {
+      width: 0;
+      height: 0;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-left: 12px solid currentColor;
+      margin-left: 3px;
+    }
+
+    .pause-icon {
+      display: flex;
+      gap: 5px;
+      width: 14px;
+      height: 14px;
+    }
+
+    .pause-icon span {
+      width: 4px;
+      height: 100%;
+      background: currentColor;
+      border-radius: 99px;
+    }
+
+    .repeat-icon {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .alarm-pulse {
+      animation: pulse 0.7s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse {
+      from {
+        box-shadow:
+          inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+          0 10px 24px rgba(0, 0, 0, 0.24);
+      }
+      to {
+        box-shadow:
+          inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+          0 0 0 8px rgba(237, 237, 237, 0.05),
+          0 10px 24px rgba(0, 0, 0, 0.24);
+      }
+    }
+
+    @media (max-width: 260px), (max-height: 320px) {
+      .widget {
+        max-width: 248px;
+        max-height: 280px;
+        padding: 12px 12px 10px;
+        border-radius: 22px;
+        gap: 8px;
+      }
+
+      .clock {
+        width: min(78%, 178px);
+      }
+
+      .readout {
+        min-width: 126px;
+        padding: 10px 14px;
+        bottom: 6px;
+      }
+
+      .time {
+        font-size: 24px;
+      }
+
+      .controls {
+        gap: 8px;
+      }
+
+      button {
+        height: 40px;
+        width: 48px;
+        border-radius: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <main class="widget">
+      <div class="clock-wrap">
+        <section class="clock" id="clock" aria-label="Timer de foco e intervalo">
+          <div class="progress" id="progress"></div>
+
+          <div class="tick t12"></div>
+          <div class="tick t3"></div>
+          <div class="tick t6"></div>
+          <div class="tick t9"></div>
+
+          <div class="hand hour"></div>
+          <div class="hand minute" id="minuteHand"></div>
+          <div class="center-dot"></div>
+
+          <div class="readout">
+            <div class="time" id="time">45:00</div>
+          </div>
+        </section>
+      </div>
+
+      <div class="controls">
+        <button id="playBtn" class="primary" aria-label="Iniciar">
+          <span class="play-icon"></span>
+        </button>
+
+        <button id="pauseBtn" aria-label="Pausar" disabled title="Pausar">
+          <span class="pause-icon"><span></span><span></span></span>
+        </button>
+
+        <button id="resetBtn" aria-label="Reiniciar" title="Reiniciar">
+          <span class="repeat-icon">↻</span>
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const FOCUS_SECONDS = 45 * 60;
+    const BREAK_SECONDS = 5 * 60;
+    const ALARM_SECONDS = 3;
+
+    const sessions = [
+      { type: "focus", duration: FOCUS_SECONDS },
+      { type: "break", duration: BREAK_SECONDS },
+      { type: "focus", duration: FOCUS_SECONDS },
+      { type: "break", duration: BREAK_SECONDS },
+      { type: "focus", duration: FOCUS_SECONDS }
+    ];
+
+    let sessionIndex = 0;
+    let remainingSeconds = sessions[sessionIndex].duration;
+    let timerId = null;
+    let alarmTimeoutId = null;
+    let alarmIntervalId = null;
+    let isRunning = false;
+    let isAlarm = false;
+    let audioContext = null;
+    let activeOscillator = null;
+    let activeGain = null;
+
+    const timeEl = document.getElementById("time");
+    const playBtn = document.getElementById("playBtn");
+    const pauseBtn = document.getElementById("pauseBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const minuteHand = document.getElementById("minuteHand");
+    const progress = document.getElementById("progress");
+    const clock = document.getElementById("clock");
+
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+    }
+
+    function currentSession() {
+      return sessions[sessionIndex];
+    }
+
+    function updateUI() {
+      const session = currentSession();
+      timeEl.textContent = formatTime(remainingSeconds);
+
+      const elapsed = session.duration - remainingSeconds;
+      const pct = elapsed / session.duration;
+      const degrees = Math.max(0, Math.min(360, pct * 360));
+
+      progress.style.setProperty("--progress", `${degrees}deg`);
+      minuteHand.style.transform = `rotate(${degrees - 90}deg)`;
+    }
+
+    function unlockAudio() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      if (audioContext.state === "suspended") {
+        audioContext.resume();
+      }
+    }
+
+    function startAlarmSound() {
+      unlockAudio();
+      stopAlarmSound();
+
+      activeOscillator = audioContext.createOscillator();
+      activeGain = audioContext.createGain();
+
+      activeOscillator.type = "sine";
+      activeOscillator.frequency.value = 860;
+
+      activeGain.gain.setValueAtTime(0.0001, audioContext.currentTime);
+      activeGain.gain.exponentialRampToValueAtTime(0.16, audioContext.currentTime + 0.04);
+
+      activeOscillator.connect(activeGain);
+      activeGain.connect(audioContext.destination);
+      activeOscillator.start();
+
+      let high = false;
+      alarmIntervalId = setInterval(() => {
+        if (!activeOscillator) return;
+        high = !high;
+        activeOscillator.frequency.setValueAtTime(high ? 980 : 760, audioContext.currentTime);
+      }, 260);
+    }
+
+    function stopAlarmSound() {
+      if (alarmIntervalId) {
+        clearInterval(alarmIntervalId);
+        alarmIntervalId = null;
+      }
+
+      if (activeOscillator && activeGain && audioContext) {
+        try {
+          activeGain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.04);
+          activeOscillator.stop(audioContext.currentTime + 0.06);
+        } catch (error) {}
+      }
+
+      activeOscillator = null;
+      activeGain = null;
+    }
+
+    function startTimer() {
+      if (isRunning || isAlarm) return;
+
+      unlockAudio();
+      isRunning = true;
+      playBtn.disabled = true;
+      pauseBtn.disabled = false;
+
+      timerId = setInterval(() => {
+        remainingSeconds--;
+
+        if (remainingSeconds <= 0) {
+          remainingSeconds = 0;
+          updateUI();
+          finishSession();
+          return;
+        }
+
+        updateUI();
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      if (!isRunning || isAlarm) return;
+
+      clearInterval(timerId);
+      timerId = null;
+      isRunning = false;
+      playBtn.disabled = false;
+      pauseBtn.disabled = true;
+    }
+
+    function finishSession() {
+      clearInterval(timerId);
+      timerId = null;
+      isRunning = false;
+      isAlarm = true;
+
+      playBtn.disabled = true;
+      pauseBtn.disabled = true;
+      clock.classList.add("alarm-pulse");
+      startAlarmSound();
+
+      alarmTimeoutId = setTimeout(() => {
+        stopAlarmSound();
+        clock.classList.remove("alarm-pulse");
+        isAlarm = false;
+
+        const hasNextSession = sessionIndex < sessions.length - 1;
+
+        if (hasNextSession) {
+          sessionIndex++;
+          remainingSeconds = currentSession().duration;
+          updateUI();
+          startTimer();
+        } else {
+          resetTimer();
+        }
+      }, ALARM_SECONDS * 1000);
+    }
+
+    function resetTimer() {
+      clearInterval(timerId);
+      clearTimeout(alarmTimeoutId);
+      stopAlarmSound();
+
+      timerId = null;
+      alarmTimeoutId = null;
+      isRunning = false;
+      isAlarm = false;
+      sessionIndex = 0;
+      remainingSeconds = sessions[0].duration;
+
+      clock.classList.remove("alarm-pulse");
+      playBtn.disabled = false;
+      pauseBtn.disabled = true;
+      updateUI();
+    }
+
+    playBtn.addEventListener("click", startTimer);
+    pauseBtn.addEventListener("click", pauseTimer);
+    resetBtn.addEventListener("click", resetTimer);
+
+    updateUI();
+  </script>
+</body>
+</html>
